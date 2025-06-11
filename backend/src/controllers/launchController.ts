@@ -35,5 +35,21 @@ export class LaunchController {
     res.status(404).json({ message: "Lançamento não encontrado" });
   }
   };
+
+  public update = async (req: Request, res: Response): Promise<void> => {
+  const repo = AppDataSource.getRepository(Launch);
+  const { id } = req.params;
   
+  const launch = await repo.findOneBy({ id: Number(id) });
+
+  if (launch) {
+    // O merge atualiza a entidade 'launch' com os dados do 'req.body'
+    repo.merge(launch, req.body);
+    const updatedLaunch = await repo.save(launch);
+    res.status(200).json(updatedLaunch);
+  } else {
+    res.status(404).json({ message: "Lançamento não encontrado" });
+  }
+};
+
 }
