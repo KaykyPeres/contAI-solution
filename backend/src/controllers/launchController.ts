@@ -3,25 +3,24 @@ import { AppDataSource } from "../data-source";
 import { Launch } from "../models/Launch";
 
 export class LaunchController {
-  create = async (req: Request, res: Response): Promise<Response> => {
+  create = async (req: Request, res: Response): Promise<void> => { 
     const repo = AppDataSource.getRepository(Launch);
+    const { description, amount, date, type } = req.body;
 
-    const { description, amount, category, type } = req.body;
-
-    if (!description || !amount || !category || !type) {
-      return res.status(400).json({ message: "Campos obrigatórios ausentes" });
+    if (!description || !amount || !date || !type) {
+      res.status(400).json({ message: "Todos os campos sao obrigatorios: description, amount, date, type" });
+      return; 
     }
-
-    const launch = repo.create({ description, amount, type });
-
+    const launch = repo.create({ description, amount, date, type });
     await repo.save(launch);
 
-    return res.status(201).json(launch);
+    res.status(201).json(launch);
   };
 
-  list = async (req: Request, res: Response): Promise<Response> => {
+  list = async (req: Request, res: Response): Promise<void> => { 
     const repo = AppDataSource.getRepository(Launch);
     const launches = await repo.find();
-    return res.status(200).json(launches);
+
+    res.status(200).json(launches);
   };
 }

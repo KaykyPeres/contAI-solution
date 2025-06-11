@@ -8,21 +8,21 @@ export enum LaunchType {
 @Entity()
 export class Launch {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  description: string;
+  description!: string;
 
   @Column("decimal", { precision: 10, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @Column({
     type: "enum",
     enum: LaunchType,
     default: LaunchType.DEBITO,
   })
-  type: LaunchType;
+  type!: LaunchType;
 
   @Column()
-  date: Date;
+  date!: Date;
 }
