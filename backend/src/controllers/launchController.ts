@@ -23,4 +23,17 @@ export class LaunchController {
 
     res.status(200).json(launches);
   };
+
+  public getOne = async (req: Request, res: Response): Promise<void> => {
+  const repo = AppDataSource.getRepository(Launch);
+  const { id } = req.params; 
+  const launch = await repo.findOneBy({ id: Number(id) });
+
+  if (launch) {
+    res.status(200).json(launch);
+  } else {
+    res.status(404).json({ message: "Lançamento não encontrado" });
+  }
+  };
+  
 }

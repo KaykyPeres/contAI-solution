@@ -6,5 +6,6 @@ const controller = new LaunchController();
 
 router.post("/", controller.create.bind(controller));
 router.get("/", controller.list.bind(controller));
+router.get("/:id", controller.getOne);
 
 export default router;
