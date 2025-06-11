@@ -1,0 +1,37 @@
+# Geral
+node_modules/
+dist/
+build/
+.env
+.env.*          # ex: .env.development, .env.production
+*.log
+*.tsbuildinfo
+package-lock.json
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Backend (pasta /backend)
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/*.tsbuildinfo
+
+# Frontend (pasta /frontend)
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.next/
+frontend/.turbo/
+
+# Test coverage
+coverage/
+
+# Cache
+.cache/
+.parcel-cache/
