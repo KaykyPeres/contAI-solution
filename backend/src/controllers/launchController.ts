@@ -52,4 +52,18 @@ export class LaunchController {
   }
 };
 
+public remove = async (req: Request, res: Response): Promise<void> => {
+  const repo = AppDataSource.getRepository(Launch);
+  const { id } = req.params;
+
+  const launchToRemove = await repo.findOneBy({ id: Number(id) });
+
+  if (launchToRemove) {
+    await repo.remove(launchToRemove);
+    res.status(204).send(); 
+  } else {
+    res.status(404).json({ message: "Lançamento não encontrado" });
+  }
+};
+
 }
