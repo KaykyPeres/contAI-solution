@@ -3,7 +3,6 @@ import { AppDataSource } from "../data-source";
 import { Launch } from "../models/Launch";
 
 export class LaunchController {
-  // Método para criar lançamento
   create = async (req: Request, res: Response): Promise<Response> => {
     const repo = AppDataSource.getRepository(Launch);
 
@@ -20,7 +19,6 @@ export class LaunchController {
     return res.status(201).json(launch);
   };
 
-  // Método para listar lançamentos
   list = async (req: Request, res: Response): Promise<Response> => {
     const repo = AppDataSource.getRepository(Launch);
     const launches = await repo.find();
