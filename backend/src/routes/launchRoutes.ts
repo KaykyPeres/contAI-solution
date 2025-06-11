@@ -1,19 +1,10 @@
 import { Router } from "express";
-import { Launch } from "../models/Launch";
-import { AppDataSource } from "../data-source";
+import { LaunchController } from "../controllers/launchController";
 
 const router = Router();
-const repo = AppDataSource.getRepository(Launch);
+const controller = new LaunchController();
 
-router.post("/", async (req, res) => {
-  const launch = repo.create(req.body);
-  const result = await repo.save(launch);
-  res.json(result);
-});
-
-router.get("/", async (req, res) => {
-  const all = await repo.find();
-  res.json(all);
-});
+router.post("/", controller.create.bind(controller));
+router.get("/", controller.list.bind(controller));
 
 export default router;

@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+
 export enum LaunchType {
   CREDITO = "Crédito",
   DEBITO = "Débito",
@@ -12,13 +13,13 @@ export class Launch {
   @Column()
   description: string;
 
-  @Column("decimal"{ precision: 10, scale: 2 })
+  @Column("decimal", { precision: 10, scale: 2 })
   amount: number;
 
   @Column({
-    type: "enum", 
-    enum: LaunchType, 
-    default: LaunchType.DEBITO, 
+    type: "enum",
+    enum: LaunchType,
+    default: LaunchType.DEBITO,
   })
   type: LaunchType;
 
