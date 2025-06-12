@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import { LaunchForm } from './components/LaunchForm'; 
+import { LaunchForm } from './components/LaunchForm';
 
 interface Launch {
   id: number;
@@ -23,8 +23,20 @@ function App() {
   };
 
   useEffect(() => {
-    fetchLaunches(); 
+    fetchLaunches();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Tem certeza que deseja deletar este lançamento?")) {
+      try {
+        await axios.delete(`http://localhost:3001/launches/${id}`);
+        fetchLaunches();
+      } catch (error) {
+        console.error("Erro ao deletar lançamento:", error);
+        alert("Não foi possível deletar o lançamento.");
+      }
+    }
+  };
 
   return (
     <div>
@@ -42,6 +54,7 @@ function App() {
             <th>Valor</th>
             <th>Tipo</th>
             <th>Data</th>
+            <th>Ações</th> 
           </tr>
         </thead>
         <tbody>
@@ -53,6 +66,11 @@ function App() {
                 {launch.type}
               </td>
               <td>{new Date(launch.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+
+              <td>
+                <button onClick={() => handleDelete(launch.id)}>Deletar</button>
+              </td>
+
             </tr>
           ))}
         </tbody>
