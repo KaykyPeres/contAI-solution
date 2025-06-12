@@ -17,11 +17,12 @@ function App() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [summary, setSummary] = useState({ total_creditos: '0', total_debitos: '0' });
   const [isLoading, setIsLoading] = useState(false);
+  const [editingLaunch, setEditingLaunch] = useState<Launch | null>(null);
 
   const fetchData = async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     if (!selectedYear || !selectedMonth) {
-      setIsLoading(false); 
+      setIsLoading(false);
       return;
     }
 
@@ -61,24 +62,32 @@ function App() {
     }
   };
 
+  const handleEdit = (launch: Launch) => {
+    setEditingLaunch(launch);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div>
       <h1>Lançamentos Contábeis - ContAI</h1>
 
       <div className="filters">
-        {/* ... seus selects de filtro ... */}
+
       </div>
 
-      <LaunchForm onLaunchAdded={fetchData} />
+      <LaunchForm
+        onActionCompleted={fetchData} // Renomeei para ser mais genérico
+        launchToEdit={editingLaunch}
+        onEditCancel={() => setEditingLaunch(null)} // Função para limpar o modo de edição
+      />
       <hr />
 
       <div className="summary">
-        {/* ... sua seção de resumo ... */}
+
       </div>
 
       <h2>Registros</h2>
 
-      {/* RENDERIZAÇÃO CONDICIONAL AQUI */}
       {isLoading ? (
         <p>Carregando dados...</p>
       ) : (
@@ -93,7 +102,7 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {/* MENSAGEM DE TABELA VAZIA AQUI */}
+
             {launches.length === 0 && (
               <tr>
                 <td colSpan={5} style={{ textAlign: 'center' }}>
@@ -111,14 +120,16 @@ function App() {
                 </td>
                 <td>{new Date(launch.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                 <td>
-                  <button onClick={() => handleDelete(launch.id)}>Deletar</button>
+                  <button className="edit-btn" onClick={() => handleEdit(launch)}>Editar</button>
+                  <button className="delete-btn" onClick={() => handleDelete(launch.id)}>Deletar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 
