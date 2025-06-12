@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 import { LaunchForm } from './components/LaunchForm';
 
-interface Launch {
+export interface Launch {
   id: number;
   description: string;
   amount: string;
@@ -17,6 +17,7 @@ function App() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [summary, setSummary] = useState({ total_creditos: '0', total_debitos: '0' });
   const [isLoading, setIsLoading] = useState(false);
+
   const [editingLaunch, setEditingLaunch] = useState<Launch | null>(null);
 
   const fetchData = async () => {
@@ -25,7 +26,6 @@ function App() {
       setIsLoading(false);
       return;
     }
-
     try {
       const [launchesResponse, summaryResponse] = await Promise.all([
         axios.get(`http://localhost:3001/launches/by-month`, {
@@ -35,14 +35,12 @@ function App() {
           params: { year: selectedYear, month: selectedMonth }
         })
       ]);
-
       setLaunches(launchesResponse.data);
       setSummary(summaryResponse.data);
-
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     } finally {
-      setIsLoading(false); // <-- E AQUI TAMBÉM
+      setIsLoading(false);
     }
   };
 
@@ -63,31 +61,47 @@ function App() {
   };
 
   const handleEdit = (launch: Launch) => {
-    setEditingLaunch(launch);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setEditingLaunch(launch); 
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
+
+  const handleActionCompleted = () => {
+    setEditingLaunch(null); 
+    fetchData(); 
+  }
 
   return (
     <div>
       <h1>Lançamentos Contábeis - ContAI</h1>
 
       <div className="filters">
-
+        <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+          {[0, 1, 2, 3, 4].map(offset => {
+            const year = new Date().getFullYear() - offset;
+            return <option key={year} value={year}>{year}</option>;
+          })}
+        </select>
+        <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
+          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+            <option key={month} value={month}>{new Date(0, month - 1).toLocaleString('pt-BR', { month: 'long' })}</option>
+          ))}
+        </select>
       </div>
 
       <LaunchForm
-        onActionCompleted={fetchData} // Renomeei para ser mais genérico
+        onActionCompleted={handleActionCompleted}
         launchToEdit={editingLaunch}
-        onEditCancel={() => setEditingLaunch(null)} // Função para limpar o modo de edição
+        onEditCancel={() => setEditingLaunch(null)}
       />
+
       <hr />
-
       <div className="summary">
-
+        <h3>Resumo do Mês Selecionado</h3>
+        <p>Total de Créditos: <span className="credito">R$ {summary.total_creditos || '0.00'}</span></p>
+        <p>Total de Débitos: <span className="debito">R$ {summary.total_debitos || '0.00'}</span></p>
       </div>
 
       <h2>Registros</h2>
-
       {isLoading ? (
         <p>Carregando dados...</p>
       ) : (
@@ -102,22 +116,18 @@ function App() {
             </tr>
           </thead>
           <tbody>
-
-            {launches.length === 0 && (
+            {launches.length === 0 && !isLoading && (
               <tr>
                 <td colSpan={5} style={{ textAlign: 'center' }}>
                   Nenhum lançamento encontrado para este período.
                 </td>
               </tr>
             )}
-
             {launches.map((launch) => (
               <tr key={launch.id}>
                 <td>{launch.description}</td>
                 <td>R$ {launch.amount}</td>
-                <td className={launch.type === 'Crédito' ? 'credito' : 'debito'}>
-                  {launch.type}
-                </td>
+                <td className={launch.type === 'Crédito' ? 'credito' : 'debito'}>{launch.type}</td>
                 <td>{new Date(launch.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                 <td>
                   <button className="edit-btn" onClick={() => handleEdit(launch)}>Editar</button>
@@ -127,9 +137,8 @@ function App() {
             ))}
           </tbody>
         </table>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }
 
