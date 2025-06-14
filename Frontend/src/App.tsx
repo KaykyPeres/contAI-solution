@@ -13,14 +13,15 @@ export interface Launch {
 
 function App() {
   const [rawData, setRawData] = useState<Launch[]>([]);
-  const [filteredLaunches, setFilteredLaunches] = useState<Launch[]>([]); 
+  const [isFilterActive, setFilterActivate] = useState(false);
+  const [filteredLaunches, setFilteredLaunches] = useState<Launch[]>([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [summary, setSummary] = useState({ total_creditos: 0, total_debitos: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [editingLaunch, setEditingLaunch] = useState<Launch | null>(null);
 
- 
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -38,7 +39,7 @@ function App() {
     fetchData();
   }, []);
 
-  
+
   useEffect(() => {
     sumarizeLaunch();
   }, [rawData, filteredLaunches]);
@@ -57,7 +58,8 @@ function App() {
     });
 
     setFilteredLaunches(filtered);
-};
+    setFilterActivate(true);
+  };
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja deletar este lançamento?")) {
@@ -113,9 +115,9 @@ function App() {
         sumDebit += Number(amount);
       });
 
-      setSummary({ total_creditos: sumCredit, total_debitos: sumDebit });   
+      setSummary({ total_creditos: sumCredit, total_debitos: sumDebit });
     } else {
-      setSummary({ total_creditos: sumCredit, total_debitos: sumDebit }); 
+      setSummary({ total_creditos: sumCredit, total_debitos: sumDebit });
     }
   }
 
@@ -176,8 +178,8 @@ function App() {
               <label htmlFor="month-select" className="text-sm font-medium text-gray-300 opacity-0 pointer-events-none">
                 Ação:
               </label>
-              <button 
-                onClick={() => {setFilteredLaunches(rawData)}}
+              <button
+                onClick={() => { setFilteredLaunches(rawData); setFilterActivate(false) }}
                 className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 border border-purple-500/20 focus:ring-4 focus:ring-purple-400/20 focus:outline-none justify-center h-[44px] md:h-[52px]"
                 title="Limpar todos os filtros e mostrar todos os lançamentos"
               >
@@ -200,7 +202,10 @@ function App() {
         {/* Resumo Financeiro */}
         <section className="bg-gray-800/95 backdrop-blur-lg rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg border border-gray-700/30">
           <h2 className="text-lg md:text-xl font-semibold text-white mb-4 md:mb-6 flex items-center gap-2">
-            📊 Resumo Financeiro - {new Date(0, selectedMonth - 1).toLocaleString('pt-BR', { month: 'long' })} {selectedYear}
+            📊 Resumo Financeiro
+            {isFilterActive && (
+              <> - {new Date(0, selectedMonth - 1).toLocaleString('pt-BR', { month: 'long' })} {selectedYear}</>
+            )}
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-4 md:p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 border border-green-500/20">
@@ -224,8 +229,8 @@ function App() {
             </div>
 
             <div className={`${calculateBalance() >= 0
-                ? 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500/20'
-                : 'bg-gradient-to-r from-orange-600 to-orange-700 border-orange-500/20'
+              ? 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500/20'
+              : 'bg-gradient-to-r from-orange-600 to-orange-700 border-orange-500/20'
               } rounded-xl p-4 md:p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 border`}>
               <div className="flex items-center gap-3 md:gap-4">
                 <div className="text-3xl md:text-4xl opacity-90">{calculateBalance() >= 0 ? '✅' : '⚠️'}</div>
@@ -293,8 +298,8 @@ function App() {
                         </td>
                         <td className="px-3 md:px-4 py-3 md:py-4">
                           <span className={`inline-flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 rounded-full text-xs font-medium ${launch.type === 'Crédito'
-                              ? 'bg-green-900/50 text-green-300 border border-green-700/50'
-                              : 'bg-red-900/50 text-red-300 border border-red-700/50'
+                            ? 'bg-green-900/50 text-green-300 border border-green-700/50'
+                            : 'bg-red-900/50 text-red-300 border border-red-700/50'
                             }`}>
                             <span className="text-xs">{launch.type === 'Crédito' ? '📈' : '📉'}</span>
                             <span className="hidden sm:inline">{launch.type}</span>
