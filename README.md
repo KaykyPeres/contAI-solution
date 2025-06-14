@@ -47,7 +47,7 @@ Para executar o projeto localmente, você precisará ter o Node.js, o Git e o Po
 1. Clonar o Repositório
 Bash
 
-git clone https://github.com/KaykyPeres/cont-ai.git
+git clone (https://github.com/KaykyPeres/contAI-solution/tree/main)
 cd cont-ai
 2. Configurar o Backend
 Bash
