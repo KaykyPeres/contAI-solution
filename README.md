@@ -15,7 +15,6 @@ Uma aplicação web moderna para o gerenciamento inteligente de lançamentos con
 
 * [Sobre o Projeto](#-sobre-o-projeto)
 * [✨ Funcionalidades](#-funcionalidades)
-* [📸 Screenshots](#-screenshots)
 * [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
 * [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
 * [🗺️ Endpoints da API](#️-endpoints-da-api)
