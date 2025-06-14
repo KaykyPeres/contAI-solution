@@ -3,12 +3,13 @@ import { AppDataSource } from "../data-source";
 import { Launch } from "../models/Launch";
 
 export class LaunchController {
-  create = async (req: Request, res: Response): Promise<void> => {
+
+  public create = async (req: Request, res: Response): Promise<void> => {
     const repo = AppDataSource.getRepository(Launch);
     const { description, amount, date, type } = req.body;
 
     if (!description || !amount || !date || !type) {
-      res.status(400).json({ message: "Todos os campos sao obrigatorios: description, amount, date, type" });
+      res.status(400).json({ message: "Todos os campos são obrigatórios: description, amount, date, type" });
       return;
     }
     const launch = repo.create({ description, amount, date, type });
@@ -17,7 +18,7 @@ export class LaunchController {
     res.status(201).json(launch);
   };
 
-  list = async (req: Request, res: Response): Promise<void> => {
+  public list = async (req: Request, res: Response): Promise<void> => {
     const repo = AppDataSource.getRepository(Launch);
     const launches = await repo.find();
 
@@ -25,9 +26,15 @@ export class LaunchController {
   };
 
   public getOne = async (req: Request, res: Response): Promise<void> => {
+    const id = parseInt(req.params.id, 10);
+
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID inválido. Deve ser um número." });
+      return;
+    }
+
     const repo = AppDataSource.getRepository(Launch);
-    const { id } = req.params;
-    const launch = await repo.findOneBy({ id: Number(id) });
+    const launch = await repo.findOneBy({ id: id });
 
     if (launch) {
       res.status(200).json(launch);
@@ -37,13 +44,17 @@ export class LaunchController {
   };
 
   public update = async (req: Request, res: Response): Promise<void> => {
-    const repo = AppDataSource.getRepository(Launch);
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
 
-    const launch = await repo.findOneBy({ id: Number(id) });
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID inválido. Deve ser um número." });
+      return;
+    }
+
+    const repo = AppDataSource.getRepository(Launch);
+    const launch = await repo.findOneBy({ id: id });
 
     if (launch) {
-      // O merge atualiza a entidade 'launch' com os dados do 'req.body'
       repo.merge(launch, req.body);
       const updatedLaunch = await repo.save(launch);
       res.status(200).json(updatedLaunch);
@@ -53,10 +64,15 @@ export class LaunchController {
   };
 
   public remove = async (req: Request, res: Response): Promise<void> => {
-    const repo = AppDataSource.getRepository(Launch);
-    const { id } = req.params;
+    const id = parseInt(req.params.id, 10);
 
-    const launchToRemove = await repo.findOneBy({ id: Number(id) });
+    if (isNaN(id)) {
+      res.status(400).json({ message: "ID inválido. Deve ser um número." });
+      return;
+    }
+
+    const repo = AppDataSource.getRepository(Launch);
+    const launchToRemove = await repo.findOneBy({ id: id });
 
     if (launchToRemove) {
       await repo.remove(launchToRemove);
@@ -67,21 +83,20 @@ export class LaunchController {
   };
 
   public listByMonth = async (req: Request, res: Response): Promise<void> => {
-  const { year, month } = req.query;
+    const { year, month } = req.query;
 
-  if (!year || !month) {
-    res.status(400).json({ message: "Ano e mês são obrigatórios" });
-    return;
-  }
+    if (!year || !month) {
+      res.status(400).json({ message: "Ano e mês são obrigatórios" });
+      return;
+    }
 
-  const repo = AppDataSource.getRepository(Launch);
-  const launches = await repo.createQueryBuilder("launch")
-    .where("EXTRACT(YEAR FROM launch.date AT TIME ZONE 'UTC') = :year", { year })
-    .andWhere("EXTRACT(MONTH FROM launch.date AT TIME ZONE 'UTC') = :month", { month })
-    .orderBy("launch.date", "ASC")
-    .getMany();
+    const repo = AppDataSource.getRepository(Launch);
+    const launches = await repo.createQueryBuilder("launch")
+      .where("EXTRACT(YEAR FROM launch.date AT TIME ZONE 'UTC') = :year", { year })
+      .andWhere("EXTRACT(MONTH FROM launch.date AT TIME ZONE 'UTC') = :month", { month })
+      .orderBy("launch.date", "ASC")
+      .getMany();
 
-  res.status(200).json(launches);
-};
-
+    res.status(200).json(launches);
+  };
 }

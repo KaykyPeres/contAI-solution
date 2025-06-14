@@ -18,24 +18,18 @@ function App() {
   const [summary, setSummary] = useState({ total_creditos: '0', total_debitos: '0' });
   const [isLoading, setIsLoading] = useState(false);
   const [editingLaunch, setEditingLaunch] = useState<Launch | null>(null);
-
-  const fetchData = async () => {
+const fetchData = async () => {
     setIsLoading(true);
     if (!selectedYear || !selectedMonth) {
       setIsLoading(false);
       return;
     }
     try {
-      const [launchesResponse, summaryResponse] = await Promise.all([
-        axios.get(`http://localhost:3001/launches/by-month`, {
-          params: { year: selectedYear, month: selectedMonth }
-        }),
-        axios.get(`http://localhost:3001/launches/summary`, {
-          params: { year: selectedYear, month: selectedMonth }
-        })
+      const [launchesResponse] = await Promise.all([
+        axios.get('http://localhost:3001/launches'),
       ]);
       setLaunches(launchesResponse.data);
-      setSummary(summaryResponse.data);
+      // setSummary(summaryResponse.data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     } finally {
