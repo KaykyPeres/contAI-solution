@@ -41,11 +41,10 @@ function App() {
   
   useEffect(() => {
     sumarizeLaunch();
-  }, [rawData]);
+  }, [rawData, filteredLaunches]);
 
   useEffect(() => {
     filterMonthAndYear();
-    sumarizeLaunch();
   }, [selectedMonth, selectedYear]);
 
 
@@ -96,7 +95,6 @@ function App() {
     return creditos - debitos;
   };
 
-  // Organiza os lançamentos da lista JÁ FILTRADA
   const sortedLaunches = [...filteredLaunches].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -116,6 +114,8 @@ function App() {
       });
 
       setSummary({ total_creditos: sumCredit, total_debitos: sumDebit });   
+    } else {
+      setSummary({ total_creditos: sumCredit, total_debitos: sumDebit }); 
     }
   }
 
